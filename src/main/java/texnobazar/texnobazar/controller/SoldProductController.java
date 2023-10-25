@@ -1,32 +1,58 @@
 package texnobazar.texnobazar.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import texnobazar.texnobazar.dto.ApiResult;
-import texnobazar.texnobazar.dto.SellerDto;
 import texnobazar.texnobazar.dto.SoldProductDto;
+import texnobazar.texnobazar.service.ProductService;
 import texnobazar.texnobazar.service.SoldProductService;
 
-@RestController
-@RequestMapping("/api/sell")
+@Controller
 @RequiredArgsConstructor
 public class SoldProductController {
     private final SoldProductService soldProductService;
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResult<SoldProductDto> addSeller(@RequestBody SoldProductDto soldProductDto){
-        return soldProductService.create(soldProductDto);
+    private final ProductService productService;
+
+
+    @GetMapping("/api/sell")
+    public String getAllProducts(@RequestParam String period, Model model){
+        model.addAttribute("sells",soldProductService.getAllSoldProducts(period).getData());
+        return "sell/getAllSellProducts";
     }
-    @PatchMapping("/update")
-    public ApiResult<SoldProductDto> updateSeller(@RequestBody SoldProductDto soldProductDto){
-        return soldProductService.update(soldProductDto);
+    @PostMapping("/api/sell")
+    public String addSell(@ModelAttribute("soldProduct") SoldProductDto soldProductDto){
+        soldProductService.create(soldProductDto);
+        return "redirect:/api/sell";
     }
-    @GetMapping("/{id}")
-    public ApiResult<SoldProductDto> getByIdSeller(@PathVariable Long id){
-        return soldProductService.get(id);
+    @GetMapping("/api/sell/new")
+    public String addSellForm(Model model){
+        SoldProductDto soldProductDto = new SoldProductDto();
+        model.addAttribute("products",productService.getAllProducts().getData());
+        model.addAttribute("soldProduct",soldProductDto);
+        return "sell/addSoldProduct";
     }
-    @DeleteMapping("/delete/{id}")
-    public ApiResult<Void> deleteSeller(@PathVariable Long id){
-        return soldProductService.delete(id);
+    @PostMapping("/api/sell/{id}")
+    public String updateProduct(@PathVariable Long id,@ModelAttribute("soldProduct") SoldProductDto soldProductDto){
+        soldProductService.update(id,soldProductDto);
+        return "redirect:/api/sell";
+    }
+    @GetMapping("/api/sell/update/{id}")
+    public String update(@PathVariable Long id, Model model){
+        model.addAttribute("products",productService.getAllProducts().getData());
+        model.addAttribute("soldProduct",soldProductService.get(id).getData());
+        return "sell/updateSoldProduct";
+    }
+    @GetMapping("/api/sell/get/{id}")
+    public String getById(@PathVariable Long id, Model model){
+        ApiResult<SoldProductDto> productDtoApiResult = soldProductService.get(id);
+        model.addAttribute("sell",productDtoApiResult.getData());
+        return "/sell/getProduct";
+    }
+    @GetMapping("/api/sell/delete/{id}")
+    public String delete(@PathVariable Long id){
+        soldProductService.delete(id);
+        return "redirect:/api/sell";
     }
 }

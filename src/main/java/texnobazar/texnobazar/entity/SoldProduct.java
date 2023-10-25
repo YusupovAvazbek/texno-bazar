@@ -21,9 +21,9 @@ public class SoldProduct {
     private Double expense;
     private Double howMuchSold;
     private Integer count;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     private Product soldProduct;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     private Seller soldBy;
     private LocalDateTime timeSold;
 }

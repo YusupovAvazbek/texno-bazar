@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import texnobazar.texnobazar.dto.ApiResult;
 import texnobazar.texnobazar.dto.ErrorDto;
 import texnobazar.texnobazar.dto.ProductDto;
@@ -19,13 +20,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static texnobazar.texnobazar.service.message.AppStatusCodes.*;
 import static texnobazar.texnobazar.service.message.AppStatusMessages.*;
 
 @Service
+//@Transactional
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
@@ -103,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ApiResult<ProductDto> update(ProductDto dto) {
+    public ApiResult<ProductDto> update(Long id,ProductDto dto) {
         if (dto == null || dto.getId() == null) {
             return ApiResult.<ProductDto>builder()
                     .code(NULL_VALUE_CODE)
@@ -116,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
                     .build();
         }
 
-        Optional<Product> existingProduct = productRepository.findById(dto.getId());
+        Optional<Product> existingProduct = productRepository.findById(id);
 
         if (!existingProduct.isPresent()) {
             return ApiResult.<ProductDto>builder()
@@ -131,12 +135,16 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = existingProduct.get();
         try {
+            if(dto.getCount() != null){
+                product.setCount(dto.getCount());
+            }
             if(dto.getName() != null){
                 product.setName(dto.getName());
             }if(dto.getCategory() != null){
                 product.setCategory(categoryMapper.toEntity(dto.getCategory()));
             }if(dto.getPriceUSD() != null){
                 product.setPriceUSD(dto.getPriceUSD());
+                product.setPriceUZS(convertUSDToUZS(dto.getPriceUSD()));
             }
             Product save = productRepository.save(product);
             return ApiResult.<ProductDto>builder()
@@ -189,6 +197,28 @@ public class ProductServiceImpl implements ProductService {
                             .build());
         }catch (Exception e){
             return ApiResult.<ProductDto>builder()
+                    .success(false)
+                    .message(DATABASE_ERROR+": "+e.getMessage())
+                    .code(DATABASE_ERROR_CODE)
+                    .errors(Collections.singleton(ErrorDto.builder()
+                            .error(e.getMessage())
+                            .build()))
+                    .build();
+        }
+    }
+
+    @Override
+    public ApiResult<List<Product>> getAllProducts() {
+        try {
+            List<Product> all = productRepository.getAllProducts();
+            return ApiResult.<List<Product>>builder()
+                    .code(OK_CODE)
+                    .message(OK)
+                    .success(true)
+                    .data(all)
+                    .build();
+        }catch (Exception e){
+            return ApiResult.<List<Product>>builder()
                     .success(false)
                     .message(DATABASE_ERROR+": "+e.getMessage())
                     .code(DATABASE_ERROR_CODE)
