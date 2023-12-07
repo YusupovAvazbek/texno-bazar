@@ -71,7 +71,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
                     <h3 class="text-center"> Sell Product </h3>
                     <div class="card=body">
-                        <form th:action="@{/api/sell}" th:object="${soldProduct}" method="post">
+                        <form th:action="@{/api/sell(period='ALL')}" th:object="${soldProduct}" method="post">
                             <div class="form-group">
                                 <div class="form-group">
                                     <label>Product</label>
@@ -113,7 +113,7 @@
                             <br>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-primary">Sell</button>
-                                <a th:href="@{/api/sell}" class="btn btn-secondary">Back</a>
+                                <a th:href="@{/api/sell(period='ALL')}" class="btn btn-secondary">Back</a>
                             </div>
                             <br>
                         </form>
