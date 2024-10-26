@@ -9,4 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class StatisticsDto {
+    Double totalPrice;
+    Long totalCount;
+    Double totalExpense;
+    Double totalProfit;
 }

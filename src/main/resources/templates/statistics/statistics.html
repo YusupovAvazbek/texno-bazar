@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:js="http://www.thymeleaf.org" xmlns:data="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" th:href="@{/static/css/styles.css}">
+  <title>ChortoqTexnoBazar</title>
+</head>
+
+<body>
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+  <div class="bg-dark" id="sidebar-wrapper">
+    <div class="sidebar-heading text-center py-4 primary-text fs-6 fw-bold text-uppercase border-bottom"><i
+            class="fas fa-user-secret me-2"></i>ChortoqTexnoBazar</div>
+    <div class="list-group list-group-flush my-3">
+      <a th:href="@{/}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
+              class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+      <a th:href="@{/api/product}" class="list-group-item list-group-item-action bg-transparent active"><i
+              class="fas fa-project-diagram me-2"></i>Products</a>
+      <a th:href="@{/api/analytics}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
+              class="fas fa-chart-line me-2"></i>Analytics</a>
+      <a th:href="@{/api/seller}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
+              class="fas fa-paperclip me-2"></i>Sellers</a>
+      <a th:href="@{/api/sell(period='ALL')}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
+              class="fas fa-shopping-cart me-2"></i>Commerce</a>
+      <a th:href="@{/api/category}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
+              class="fas fa-gift me-2"></i>Category</a>
+      <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i
+              class="fas fa-power-off me-2"></i>Logout</a>
+    </div>
+  </div>
+  <!-- /#sidebar-wrapper -->
+
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+        <h2 class="fs-2 m-0">Dashboard</h2>
+      </div>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <button id="getStatisticsButton" class="btn btn-secondary">Get Statistics</button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+      <div class="row my-10">
+        <div class="col-lg-6">
+          <h3 class="fs-4 mb-2">Statistics</h3>
+        </div>
+        <div class="col-lg-6">
+          <form id="dateForm" class="mb-3">
+            <div class="form-group">
+              <label for="startDate">Start Date:</label>
+              <input type="date" class="form-control" id="startDate" name="startDate">
+            </div>
+            <div class="form-group">
+              <label for="endDate">End Date:</label>
+              <input type="date" class="form-control" id="endDate" name="endDate">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <p>Total Price: <span id="totalPrice"></span></p>
+      <p>Total Count: <span id="totalCount"></span></p>
+      <p>Total Expense: <span id="totalExpense"></span></p>
+      <p>Total Profit: <span id="totalProfit"></span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to format the date as yyyy.mm.dd
+  function formatDate(dateInput) {
+    const date = new Date(dateInput.value);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    dateInput.value = `${year}-${month}-${day}`;
+  }
+
+  // Listen for changes in the date input fields
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+
+  startDateInput.addEventListener('change', function() {
+    formatDate(startDateInput);
+  });
+
+  endDateInput.addEventListener('change', function() {
+    formatDate(endDateInput);
+  });
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var el = document.getElementById("wrapper");
+  var toggleButton = document.getElementById("menu-toggle");
+
+  toggleButton.onclick = function () {
+    el.classList.toggle("toggled");
+  };
+</script>
+<script>
+  document.getElementById("getStatisticsButton").addEventListener("click", function() {
+    // Get the values of the date input fields
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    // Create a new XMLHttpRequest or use a modern fetch API to send an AJAX request
+    const xhr = new XMLHttpRequest();
+    const url = "/api/statistics?startDate=" + startDate + "&endDate=" + endDate;
+    xhr.open("GET", url, true);
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // Handle the response from the server, e.g., update the page with statistics
+        const response = JSON.parse(xhr.responseText); // Assuming the response is in JSON format
+        // Update the page with the statistics data
+        document.getElementById("totalPrice").textContent = response.totalPrice;
+        document.getElementById("totalCount").textContent = response.totalCount;
+        document.getElementById("totalExpense").textContent = response.totalExpense;
+        document.getElementById("totalProfit").textContent = response.totalProfit;
+      }
+    };
+
+    xhr.send();
+  });
+</script>
+</body>
+
+</html>

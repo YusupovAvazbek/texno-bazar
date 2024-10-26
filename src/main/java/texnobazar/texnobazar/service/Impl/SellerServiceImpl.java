@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import texnobazar.texnobazar.dto.ApiResult;
 import texnobazar.texnobazar.dto.ErrorDto;
 import texnobazar.texnobazar.dto.SellerDto;
+import texnobazar.texnobazar.entity.Product;
 import texnobazar.texnobazar.entity.Seller;
 import texnobazar.texnobazar.mapper.SellerMapper;
 import texnobazar.texnobazar.repository.SellerRepository;
@@ -13,6 +14,7 @@ import texnobazar.texnobazar.service.SellerService;
 import texnobazar.texnobazar.service.message.AppStatusCodes;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static texnobazar.texnobazar.service.message.AppStatusCodes.*;
@@ -27,7 +29,7 @@ public class SellerServiceImpl implements SellerService {
     public ApiResult<SellerDto> create(SellerDto dto) {
         try {
             Optional<Seller> sellerByUsername = sellerRepository.getSellerByUsername(dto.getUsername());
-            if(sellerByUsername.isEmpty()){
+            if(!sellerByUsername.isEmpty()){
                 return ApiResult.<SellerDto>builder()
                         .code(AppStatusCodes.ALREADY_EXISTS_ERROR_CODE)
                         .message(ALREADY_EXISTS)
@@ -104,7 +106,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public ApiResult<SellerDto> update(SellerDto dto) {
+    public ApiResult<SellerDto> update(Long id,SellerDto dto) {
         if (dto == null || dto.getId() == null) {
             return ApiResult.<SellerDto>builder()
                     .code(NULL_VALUE_CODE)
@@ -117,7 +119,7 @@ public class SellerServiceImpl implements SellerService {
                     .build();
         }
         try {
-            Optional<Seller> sellerByIdAndIsActive = sellerRepository.getSellerByIdAndIsActive(dto.getId(), (short) 1);
+            Optional<Seller> sellerByIdAndIsActive = sellerRepository.getSellerByIdAndIsActive(id, (short) 1);
             if(sellerByIdAndIsActive.isEmpty()){
                 return ApiResult.<SellerDto>builder()
                         .code(NOT_FOUND_ERROR_CODE)
@@ -188,6 +190,28 @@ public class SellerServiceImpl implements SellerService {
                             .build());
         }catch (Exception e){
             return ApiResult.<SellerDto>builder()
+                    .success(false)
+                    .message(DATABASE_ERROR+": "+e.getMessage())
+                    .code(DATABASE_ERROR_CODE)
+                    .errors(Collections.singleton(ErrorDto.builder()
+                            .error(e.getMessage())
+                            .build()))
+                    .build();
+        }
+    }
+
+    @Override
+    public ApiResult<List<Seller>> getAllSellers() {
+        try {
+            List<Seller> all = sellerRepository.getAllSellers();
+            return ApiResult.<List<Seller>>builder()
+                    .code(OK_CODE)
+                    .message(OK)
+                    .success(true)
+                    .data(all)
+                    .build();
+        }catch (Exception e){
+            return ApiResult.<List<Seller>>builder()
                     .success(false)
                     .message(DATABASE_ERROR+": "+e.getMessage())
                     .code(DATABASE_ERROR_CODE)

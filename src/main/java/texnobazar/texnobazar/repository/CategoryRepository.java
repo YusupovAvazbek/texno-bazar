@@ -7,4 +7,5 @@ import texnobazar.texnobazar.entity.Category;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<Category,Long> {
+
 }

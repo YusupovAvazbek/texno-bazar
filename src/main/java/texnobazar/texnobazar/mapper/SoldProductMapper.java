@@ -15,11 +15,11 @@ public abstract class SoldProductMapper implements BaseMapper<SoldProduct, SoldP
     @Autowired
     protected ProductMapper productMapper;
 
-    @Mapping(target = "soldProduct", expression = "java(productMapper.toEntityList(soldProductDto.getSoldProduct()))")
-    @Mapping(target = "soldBy", expression = "java(sellerMapper.toEntityList(soldProductDto.getSoldBy()))")
+    @Mapping(target = "soldProduct", expression = "java(productMapper.toEntity(soldProductDto.getSoldProduct()))")
+    @Mapping(target = "soldBy", expression = "java(sellerMapper.toEntity(soldProductDto.getSoldBy()))")
     public abstract SoldProduct toEntity(SoldProductDto soldProductDto);
 
-    @Mapping(target = "soldProduct", expression = "java(productMapper.toDtoList(soldProduct.getSoldProduct()))")
-    @Mapping(target = "soldBy", expression = "java(sellerMapper.toDtoList(soldProduct.getSoldBy()))")
+    @Mapping(target = "soldProduct", expression = "java(productMapper.toDto(soldProduct.getSoldProduct()))")
+    @Mapping(target = "soldBy", expression = "java(sellerMapper.toDto(soldProduct.getSoldBy()))")
     public abstract SoldProductDto toDto(SoldProduct soldProduct);
 }

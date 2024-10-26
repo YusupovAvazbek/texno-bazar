@@ -20,6 +20,6 @@ public class SoldProductDto {
     private Double expense;
     private Double howMuchSold;
     private Integer count;
-    private ArrayList<ProductDto> soldProduct;
-    private ArrayList<SellerDto> soldBy;
+    private ProductDto soldProduct;
+    private SellerDto soldBy;
 }
