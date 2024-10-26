@@ -36,6 +36,7 @@ public class CategoryController {
         model.addAttribute("category",categoryDto);
         return "category/addCategory";
     }
+
     @PostMapping("/api/category/{id}")
     public String updateProduct(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto){
         categoryService.update(id,categoryDto);
